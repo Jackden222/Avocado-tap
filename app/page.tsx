@@ -1,101 +1,157 @@
+'use client'
+
 import Image from "next/image";
+import React, { useState, useEffect } from 'react';
+import Link from "next/link";
+import BottomNav from "./ui/page";
 
-export default function Home() {
+
+
+
+
+const Home = () => {
+
+  const levelNames = [
+    "Bronze",    // From 0 to 4999 coins
+    "Silver",    // From 5000 coins to 24,999 coins
+    "Gold",      // From 25,000 coins to 99,999 coins
+    "Platinum",  // From 100,000 coins to 999,999 coins
+    "Diamond",   // From 1,000,000 coins to 2,000,000 coins
+    "Epic",      // From 2,000,000 coins to 10,000,000 coins
+    "Legendary", // From 10,000,000 coins to 50,000,000 coins
+    "Master",    // From 50,000,000 coins to 100,000,000 coins
+    "GrandMaster", // From 100,000,000 coins to 1,000,000,000 coins
+    "Lord"       // From 1,000,000,000 coins to ∞
+  ];
+
+  const levelMinPoints = [
+    0,        // Bronze
+    5000,     // Silver
+    25000,    // Gold
+    100000,   // Platinum
+    1000000,  // Diamond
+    2000000,  // Epic
+    10000000, // Legendary
+    50000000, // Master
+    100000000,// GrandMaster
+    1000000000// Lord
+  ];
+
+  const [levelIndex, setLevelIndex] = useState(6);
+  const [points, setPoints] = useState(4900);
+  const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
+  const pointsToAdd = 11;
+
+
+  const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    card.style.transform = `perspective(1000px) rotateX(${-y / 10}deg) rotateY(${x / 10}deg)`;
+    setTimeout(() => {
+      card.style.transform = '';
+    }, 100);
+
+    setPoints(points + pointsToAdd);
+    setClicks([...clicks, { id: Date.now(), x: e.pageX, y: e.pageY }]);
+  };
+
+
+  const calculateProgress = () => {
+    if (levelIndex >= levelNames.length - 1) {
+      return 100;
+    }
+    const currentLevelMin = levelMinPoints[levelIndex];
+    const nextLevelMin = levelMinPoints[levelIndex + 1];
+    const progress = ((points - currentLevelMin) / (nextLevelMin - currentLevelMin)) * 100;
+    return Math.min(progress, 100);
+  };
+
+  useEffect(() => {
+    const currentLevelMin = levelMinPoints[levelIndex];
+    const nextLevelMin = levelMinPoints[levelIndex + 1];
+    if (points >= nextLevelMin && levelIndex < levelNames.length - 1) {
+      setLevelIndex(levelIndex + 1);
+    } else if (points < currentLevelMin && levelIndex > 0) {
+      setLevelIndex(levelIndex - 1);
+    }
+  }, [points, levelIndex, levelMinPoints, levelNames.length]);
+
+
+
+
+
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="bg-black flex justify-center">
+      <div className="w-full bg-black text-white h-screen font-bold flex flex-col max-w-xl">
+        <div className="px-4 z-10">
+          <div className="flex items-center space-x-2 pt-4">
+            <div className="p-1 rounded-lg bg-[#1d2025]">
+              <img className='justify-between items-center pt-2 m-auto' src="/bluesky.svg" alt="/" width={24} height={24}/>
+            </div>
+              <div>
+                <p className="text-sm">Danil (CEO)</p>
+              </div>
+          </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <div className="flex items-center justify-between space-x-4 mt-1">
+            <div className="flex items-center w-1/3">
+              <div className="w-full">
+                <div className="flex justify-between">
+                  <p className="text-sm">{levelNames[levelIndex]}</p>
+                  <p className="text-sm">{levelIndex + 1} <span className="text-[#95908a]">/ {levelNames.length}</span></p>
+                </div>
+                <div className="flex items-center mt-1 border-2 border-[#43433b] rounded-full">
+                  <div className="w-full h-2 bg-[#43433b]/[0.6] rounded-full">
+                    <div className="progress-gradient h-2 rounded-full" style={{ width: `${calculateProgress()}%` }}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center w-1/3 border-2 border-[#43433b] rounded-full px-4 py-[2px] bg-[#43433b]/[0.6] max-w-64">
+              <img src="/bluesky.svg" alt="/" className="w-6 h-6" />
+              <div className="h-[32px] w-[2px] bg-[#43433b] mx-2"></div>
+              <img className='justify-between items-center pt-2 m-auto' src="/bluesky.svg" alt="/" width={24} height={24}/>
+            </div>
+          </div>
+
+          <div className="px-4 mt-4 flex justify-center">
+              <div className="px-4 py-2 flex items-center space-x-2">
+                <img src="/bluesky.svg" alt="/" className="w-10 h-10" />
+                <p className="text-4xl text-white">{points.toLocaleString()}</p>
+              </div>
+            </div>
+
+            <div className="px-4 mt-4 flex justify-center">
+              <div
+                className="w-80 h-80 p-4 rounded-full circle-outer"
+                onClick={handleCardClick}
+              >
+                <div className="w-full h-full rounded-full circle-inner">
+                  <img src="/bluesky.svg" alt="/" className="w-full h-full" />
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+                  
+                  
+            {/* <div className="px-4 mt-4 flex justify-center">
+              <div className="w-80 h-80 p-4 rounded-full circle-outer">
+              <div className="w-full h-full rounded-full circle-inner">
+              <img className='justify-between items-center pt-2 m-auto' src="/bluesky.svg" alt="/" width={100} height={100}/>
+              </div>
+              </div>
+              </div> */}
+        <BottomNav />
+      </div>
+      
     </div>
   );
 }
+
+export default Home;
