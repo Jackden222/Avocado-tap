@@ -1,0 +1,7 @@
+.progress-gradient {
+  background: linear-gradient(to right, #90ef89, #d692dd, #726edd);
+}
+
+.progress-gradient-energy {
+  background: linear-gradient(to right, #726edd, #90ef89, #d692dd);
+}

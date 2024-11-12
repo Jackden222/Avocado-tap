@@ -4,12 +4,15 @@ import Image from "next/image";
 import React, { useState, useEffect } from 'react';
 import Link from "next/link";
 import BottomNav from "./ui/page";
+import './main.css';
 
 
 
 
 
 const Home = () => {
+
+  
 
   const levelNames = [
     "Bronze",    // From 0 to 4999 coins
@@ -39,23 +42,37 @@ const Home = () => {
 
   const [levelIndex, setLevelIndex] = useState(6);
   const [points, setPoints] = useState(4900);
+  const [energy, setEnergy] = useState(500); // Начальная энергия
   const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
-  const pointsToAdd = 11;
+  
+  const [multitapLevel, setMultitapLevel] = useState(0);
+  const [multitapCost, setMultitapCost] = useState(2000);
+  const pointsToAdd = 11 + multitapLevel;
 
+  const buyMultitap = () => {
+    if (points >= multitapCost) {
+        setPoints(points - multitapCost);
+        setMultitapLevel(multitapLevel + 1);
+        setMultitapCost(multitapCost * 2); // Увеличиваем цену в 2 раза
+    }
+};
 
-  const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const card = e.currentTarget;
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    card.style.transform = `perspective(1000px) rotateX(${-y / 10}deg) rotateY(${x / 10}deg)`;
-    setTimeout(() => {
-      card.style.transform = '';
-    }, 100);
+const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
+  if (energy > 0) {
+      const card = e.currentTarget;
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left - rect.width / 2;
+      const y = e.clientY - rect.top - rect.height / 2;
+      card.style.transform = `perspective(1000px) rotateX(${-y / 10}deg) rotateY(${x / 10}deg)`;
+      setTimeout(() => {
+          card.style.transform = '';
+      }, 100);
 
-    setPoints(points + pointsToAdd);
-    setClicks([...clicks, { id: Date.now(), x: e.pageX, y: e.pageY }]);
-  };
+      setPoints(points + pointsToAdd); // Увеличиваем очки с учетом уровня multitap
+      setEnergy(energy - 1);
+      setClicks([...clicks, { id: Date.now(), x: e.pageX, y: e.pageY }]);
+  }
+};
 
 
   const calculateProgress = () => {
@@ -79,17 +96,25 @@ const Home = () => {
   }, [points, levelIndex, levelMinPoints, levelNames.length]);
 
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setEnergy(prevEnergy => Math.min(prevEnergy + 3, 500)); // Восстанавливаем 1 единицу энергии, максимум 500
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
 
 
 
 
   return (
     <div className="bg-black flex justify-center">
-      <div className="w-full bg-black text-white h-screen font-bold flex flex-col max-w-xl">
+      <div className="w-full bg-[#1a1c32] text-white h-screen font-bold flex flex-col max-w-xl">
         <div className="px-4 z-10">
           <div className="flex items-center space-x-2 pt-4">
             <div className="p-1 rounded-lg bg-[#1d2025]">
-              <img className='justify-between items-center pt-2 m-auto' src="/bluesky.svg" alt="/" width={24} height={24}/>
+              <img className='justify-between items-center m-auto' src="/binance-logo.png" alt="/" width={24} height={24}/>
             </div>
               <div>
                 <p className="text-sm">Danil (CEO)</p>
@@ -111,45 +136,46 @@ const Home = () => {
               </div>
             </div>
 
-            <div className="flex items-center w-1/3 border-2 border-[#43433b] rounded-full px-4 py-[2px] bg-[#43433b]/[0.6] max-w-64">
-              <img src="/bluesky.svg" alt="/" className="w-6 h-6" />
-              <div className="h-[32px] w-[2px] bg-[#43433b] mx-2"></div>
-              <img className='justify-between items-center pt-2 m-auto' src="/bluesky.svg" alt="/" width={24} height={24}/>
+            <div className="flex items-center w-1/3 h-[32px] border-2 border-[#43433b] rounded-full px-4 py-[2px] bg-[#43433b]/[0.6] max-w-24">
+              <img src="/binance-logo.png" alt="/" className="w-6 h-6 mr-2" />
+                
+              <img className="justify-between items-center w-6 h-6 ml-2" src="/setting.png" alt="" width={24} height={24}/>
+              
             </div>
           </div>
 
           <div className="px-4 mt-4 flex justify-center">
               <div className="px-4 py-2 flex items-center space-x-2">
-                <img src="/bluesky.svg" alt="/" className="w-10 h-10" />
+                <img src="/clever.png" alt="/" className="w-10 h-10" />
                 <p className="text-4xl text-white">{points.toLocaleString()}</p>
               </div>
             </div>
 
-            <div className="px-4 mt-4 flex justify-center">
-              <div
-                className="w-80 h-80 p-4 rounded-full circle-outer"
-                onClick={handleCardClick}
-              >
+            <div className="px-1 mt-4 flex justify-center">
+              <div className="w-80 h-80 p-4 rounded-full circle-outer"onClick={handleCardClick}>
                 <div className="w-full h-full rounded-full circle-inner">
-                  <img src="/bluesky.svg" alt="/" className="w-full h-full" />
+                  <img src="/clever.png" alt="/" className="w-full h-full" />
+                </div> 
+              </div>
+
+              <div className="flex flex-col space-y-6 fixed bottom-[120px] left-0 right-0 justify-center items-center px-5">
+                <div className="flex flex-col w-full items-center justify-center">
+                  <div className="flex pb-[6px] space-x-1 items-center justify-center text-[#fff]">
+                  <img src="/clever.png" alt="/" className="w-[20px]" />
+                    <div>
+                      <span className="text-[18px] font-bold">{energy}</span>
+                      <span className="text-[14px] font-medium">/ 500</span>
+                    </div>
+                  </div>
+                  <div className="flex  w-full p-[4px] h-[20px] items-center bg-energybar rounded-[12px] border-[1px] border-borders2">
+                    <div className="bg-orange-300/80 h-full rounded-full transition-width duration-100" style={{ width: `${(energy / 500) * 100}%` }}></div>
+                  </div>
                 </div>
               </div>
             </div>
-
-
-          </div>
-                  
-                  
-            {/* <div className="px-4 mt-4 flex justify-center">
-              <div className="w-80 h-80 p-4 rounded-full circle-outer">
-              <div className="w-full h-full rounded-full circle-inner">
-              <img className='justify-between items-center pt-2 m-auto' src="/bluesky.svg" alt="/" width={100} height={100}/>
-              </div>
-              </div>
-              </div> */}
+          </div>    
         <BottomNav />
       </div>
-      
     </div>
   );
 }
