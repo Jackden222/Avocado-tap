@@ -1,4 +1,5 @@
-import React from 'react'
+'use client'
+
 import BottomNav from '../ui/page'
 
 
@@ -42,7 +43,7 @@ const Boost = () => {
 
             <div className='w-full flex flex-col h-[50vh] pt-2 pb-[60px] overflow-y-auto'>
               <div className='flex alltaskscontainer flex-col w-full space-y-2 pb-20'>
-                <button className='bg-[#1f2942] opacity-100 bg-cards rounded-[10px] px-[14px] py-[8px] flex justify-between items-center'>
+                <button  className='bg-[#1f2942] opacity-100 bg-cards rounded-[10px] px-[14px] py-[8px] flex justify-between items-center'>
                   <div className='flex flex-1 items-center space-x-2'>
                     <div>
                       <img src="/tap.png" alt="/" className='w-[35px]' />

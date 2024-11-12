@@ -41,21 +41,10 @@ const Home = () => {
   ];
 
   const [levelIndex, setLevelIndex] = useState(6);
-  const [points, setPoints] = useState(4900);
+  const [points, setPoints] = useState(4990);
   const [energy, setEnergy] = useState(500); // Начальная энергия
   const [clicks, setClicks] = useState<{ id: number, x: number, y: number }[]>([]);
-  
-  const [multitapLevel, setMultitapLevel] = useState(0);
-  const [multitapCost, setMultitapCost] = useState(2000);
-  const pointsToAdd = 11 + multitapLevel;
-
-  const buyMultitap = () => {
-    if (points >= multitapCost) {
-        setPoints(points - multitapCost);
-        setMultitapLevel(multitapLevel + 1);
-        setMultitapCost(multitapCost * 2); // Увеличиваем цену в 2 раза
-    }
-};
+  const pointsToAdd = 1;
 
 const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
   if (energy > 0) {
@@ -98,7 +87,7 @@ const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setEnergy(prevEnergy => Math.min(prevEnergy + 3, 500)); // Восстанавливаем 1 единицу энергии, максимум 500
+      setEnergy(prevEnergy => Math.min(prevEnergy + 1, 500)); // Восстанавливаем 1 единицу энергии, максимум 500
     }, 1000);
 
     return () => clearInterval(interval);
