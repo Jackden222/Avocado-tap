@@ -3,8 +3,10 @@
 import Image from "next/image";
 import React, { useState, useEffect } from 'react';
 import Link from "next/link";
-import BottomNav from "./ui/page";
+import BottomNav from "./components/ui/page";
 import './main.css';
+import Modal from './components/ui/Modal';
+import Modal1 from './pages/Boost/page';
 
 
 
@@ -39,6 +41,29 @@ const Home = () => {
     100000000,// GrandMaster
     1000000000// Lord
   ];
+
+  
+
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {2
+    setModalOpen(false);
+  };
+
+  const [isModalOpen1, setModalOpen1] = useState(false);
+
+  const handleOpenModal1 = () => {
+    setModalOpen1(true);
+  };
+
+  const handleCloseModal1 = () => {2
+    setModalOpen1(false);
+  };
+
 
   const [levelIndex, setLevelIndex] = useState(6);
   const [points, setPoints] = useState(4990);
@@ -128,7 +153,9 @@ const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
             <div className="flex items-center w-1/3 h-[32px] border-2 border-[#43433b] rounded-full px-4 py-[2px] bg-[#43433b]/[0.6] max-w-24">
               <img src="/binance-logo.png" alt="/" className="w-6 h-6 mr-2" />
                 
-              <img className="justify-between items-center w-6 h-6 ml-2" src="/setting.png" alt="" width={24} height={24}/>
+                <button onClick={handleOpenModal}>
+                  <img className="justify-between items-center w-6 h-6 ml-2" src="/setting.png" alt="" width={24} height={24}/>
+                </button>
               
             </div>
           </div>
@@ -165,6 +192,7 @@ const handleCardClick = (e: React.MouseEvent<HTMLDivElement>) => {
           </div>    
         <BottomNav />
       </div>
+      <Modal isOpen={isModalOpen} onClose={handleCloseModal} />
     </div>
   );
 }

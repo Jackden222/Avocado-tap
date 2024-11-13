@@ -1,17 +1,16 @@
 'use client'
 
-import BottomNav from '../ui/page'
+import BottomNav from '../../components/ui/page'
 
 
 const Boost = () => {
-
 
   
 
 
   
   return (
-    <div className="bg-black flex justify-center">
+    <div className="bg-black flex justify-center font-bold">
       <div className="w-full bg-[#1a1c32] text-white h-screen font-bold flex flex-col max-w-xl">
         <div className="px-4 z-10">
           <div className="flex items-center space-x-2 pt-4">
